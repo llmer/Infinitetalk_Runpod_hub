@@ -468,6 +468,7 @@ def handler(job):
     prompt["246"]["inputs"]["value"] = height
 
     prompt["270"]["inputs"]["value"] = max_frame
+    prompt["192"]["inputs"]["frame_window_size"] = max_frame
 
     # 다중 인물용 두 번째 오디오 설정
     if person_count == "multi":
