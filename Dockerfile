@@ -74,4 +74,6 @@ COPY --from=models /models/ /ComfyUI/models/
 COPY . .
 RUN chmod +x /entrypoint.sh
 
+ENV RUNPOD_PING_INTERVAL=3000
+
 CMD ["/entrypoint.sh"]

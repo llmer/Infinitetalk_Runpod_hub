@@ -232,7 +232,22 @@ def get_videos(ws, prompt, input_type="image", person_count="single", job=None):
     heartbeat_stop = threading.Event()
 
     def heartbeat():
-        while not heartbeat_stop.wait(10):
+        hb = None
+        try:
+            from runpod.serverless.modules.rp_ping import Heartbeat
+            hb = Heartbeat()
+            logger.info("Direct sidecar heartbeat initialized")
+        except Exception as e:
+            logger.warning(f"Could not init direct heartbeat: {e}")
+
+        while not heartbeat_stop.wait(8):
+            # Direct sidecar ping (may prevent stale requeue)
+            if hb:
+                try:
+                    hb._send_ping()
+                except Exception as e:
+                    logger.warning(f"Sidecar ping failed: {e}")
+            # Client-visible progress (does NOT prevent requeue)
             if job:
                 runpod.serverless.progress_update(job, "Processing...")
 
@@ -362,6 +377,10 @@ def calculate_max_frames_from_audio(wav_path, wav_path_2=None, fps=25):
 
 
 def handler(job):
+    logger.info(f"RunPod SDK v{runpod.__version__}")
+    logger.info(f"RUNPOD_WEBHOOK_PING: {'SET' if os.environ.get('RUNPOD_WEBHOOK_PING') else 'NOT SET'}")
+    logger.info(f"RUNPOD_PING_INTERVAL: {os.environ.get('RUNPOD_PING_INTERVAL', '10000 (default)')}")
+
     job_input = job.get("input", {})
     use_network_volume = job_input.get("network_volume", False)
     request_key = get_request_key(job)
