@@ -82,11 +82,14 @@ RUN pip install -U wheel setuptools packaging
 RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
 RUN pip install xformers --index-url https://download.pytorch.org/whl/cu128
 
+# Build deps needed by flash_attn's setup.py
+RUN pip install ninja psutil
+
 # flash_attn compiled for A100 + H100 (inherits TORCH_CUDA_ARCH_LIST)
-RUN pip install ninja && pip install flash_attn --no-build-isolation
+RUN pip install flash_attn --no-build-isolation
 
 # Additional deps from base image
-RUN pip install misaki[en] psutil packaging transformers==4.48.2
+RUN pip install misaki[en] packaging transformers==4.48.2
 
 # Runtime deps
 RUN pip install -U "huggingface_hub[hf_transfer]" runpod websocket-client librosa
