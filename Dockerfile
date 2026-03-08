@@ -82,11 +82,10 @@ RUN pip install -U wheel setuptools packaging
 RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
 RUN pip install xformers --index-url https://download.pytorch.org/whl/cu128
 
-# Build deps needed by flash_attn's setup.py
-RUN pip install ninja psutil
-
-# flash_attn compiled for A100 + H100 (inherits TORCH_CUDA_ARCH_LIST)
-RUN pip install flash_attn --no-build-isolation
+# flash_attn pre-built for CUDA 12.8 + PyTorch 2.10 + Python 3.10
+# Source: https://github.com/mjun0812/flash-attention-prebuild-wheels/releases/tag/v0.7.16
+RUN pip install ninja psutil && \
+    pip install "https://github.com/mjun0812/flash-attention-prebuild-wheels/releases/download/v0.7.16/flash_attn-2.8.3%2Bcu128torch2.10-cp310-cp310-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl"
 
 # Additional deps from base image
 RUN pip install misaki[en] packaging transformers==4.48.2
