@@ -7,7 +7,7 @@
   
     "config": {
       "runsOn": "GPU",
-      "containerDiskInGb": 280,
+      "containerDiskInGb": 80,
   
       "gpuCount": 1,
       "gpuIds": "NVIDIA A100 80GB PCIe,NVIDIA A100-SXM4-80GB,NVIDIA H100 80GB HBM3,NVIDIA H100 PCIe",
